@@ -4,8 +4,6 @@ import numpy as np
 import matplotlib.ticker as mtick
 import os 
 
-fig1, ax1 = plt.subplots(1, 1)
-
 filepath = os.path.abspath(os.getcwd()) + "/logos/"
 print(filepath)
 
@@ -15,14 +13,10 @@ seasons_nhl_edge = nhl_edge_data.groupby(nhl_edge_data["Season", "Season"]) # gr
 
 # convert Zone Time OZ% to OZ as a float 
 for i in range(len(nhl_edge_data["Zone Time", "OZ%"])):
-    nhl_edge_data["Zone Time", "OZ%"][i] = (float)(nhl_edge_data.loc[:, ("Zone Time", "OZ%")][i][:-1])
+    nhl_edge_data.loc[:, ("Zone Time", "OZ%")].values[i] = (float)(nhl_edge_data.loc[:, ("Zone Time", "OZ%")].values[i][:-1])
 # convert Zone Time PPOZ to PPOZ as a float 
 for i in range(len(nhl_edge_data["Zone Time", "PPOZ"])):
-    nhl_edge_data["Zone Time", "PPOZ"][i] = (float)(nhl_edge_data.loc[:, ("Zone Time", "PPOZ")][i][:-1])
-
-print(nhl_edge_data["Zone Time", "OZ%"])
-# print(nhl_data["Zone Time", "OZ%"])
-# nhl_data.replace(to_replace=nhl_data["Zone Time", "OZ%"], value=new_oz)
+    nhl_edge_data.loc[:, ("Zone Time", "PPOZ")].values[i] = (float)(nhl_edge_data.loc[:, ("Zone Time", "PPOZ")].values[i][:-1])
 
 # 21-22 Season (Regular)
 reg_season_21_22 = seasons_nhl_edge.get_group("21-22")
@@ -37,8 +31,7 @@ reg_season_22_23 = seasons_nhl_edge.get_group("22-23")
 playoff_season_22_23 = seasons_nhl_edge.get_group("22-23p")
 
 # Zone time comparison 
-
-# print(reg_season_21_22["Zone Time", "OZ%"])
+fig1, ax1 = plt.subplots(1, 1)
 fmt = '%.1f%%'
 yticks = mtick.FormatStrFormatter(fmt)
 ax1.yaxis.set_major_formatter(yticks)
