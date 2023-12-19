@@ -18,34 +18,14 @@ for i in range(len(nhl_edge_data["Zone Time", "OZ%"])):
 for i in range(len(nhl_edge_data["Zone Time", "PPOZ"])):
     nhl_edge_data.loc[:, ("Zone Time", "PPOZ")].values[i] = (float)(nhl_edge_data.loc[:, ("Zone Time", "PPOZ")].values[i][:-1])
 
-# 21-22 Season (Regular)
-reg_season_21_22 = seasons_nhl_edge.get_group("21-22")
-
-# 21-22 Season (Playoffs)
-playoff_season_21_22 = seasons_nhl_edge.get_group("21-22p")
-
-# 22-23 Season (Regular)
-reg_season_22_23 = seasons_nhl_edge.get_group("22-23")
-
-# 22-23 Season (Playoffs)
-playoff_season_22_23 = seasons_nhl_edge.get_group("22-23p")
-
-# Zone time comparison 
-fig1, ax1 = plt.subplots(1, 1)
-fmt = '%.1f%%'
-yticks = mtick.FormatStrFormatter(fmt)
-ax1.yaxis.set_major_formatter(yticks)
-ax1.set_title("Time spent in OZ of PP")
-ax1.plot(reg_season_21_22["Abbreviation", "Abbreviation"], reg_season_21_22["Zone Time", "PPOZ"], linestyle="None")
-# ax1.scatter(reg_season_22_23["Abbreviation", "Abbreviation"], reg_season_22_23["Zone Time", "PPOZ"], label="Regular Season 2022-2023")
-
 # plot images 
 def plot_images(x, y, ax=None):
     ax = ax or plt.gca()
 
     for xi, yi in zip(x,y):
         path = get_logos(xi)
-        image = Image.open(path).resize((50, 50), Image.Resampling.LANCZOS)
+        image = Image.open(path)
+        image.thumbnail((50, 50), Image.Resampling.LANCZOS)
         im = OffsetImage(image, zoom=72/ax.figure.dpi)
         im.image.axes = ax
 
@@ -53,12 +33,21 @@ def plot_images(x, y, ax=None):
 
         ax.add_artist(ab)
 
-plot_images(reg_season_21_22["Abbreviation", "Abbreviation"], reg_season_21_22["Zone Time", "PPOZ"], ax=ax1)
+percentages = ["PPOZ", "OZ%"]
 
-ax1.set_xlabel("Teams")
-ax1.set_ylabel("% PPOZ Time")
-# ax1.legend()
+def graph_nhl(season:str, category:str, subcategory:str):
+    fig1, ax1 = plt.subplots(1, 1)
+    if subcategory in percentages:
+        fmt = '%.1f%%'
+        yticks = mtick.FormatStrFormatter(fmt)
+        ax1.yaxis.set_major_formatter(yticks)
+    ax1.set_title(season + " " + category + ": " + subcategory)
+    ax1.set_xticks([]) # remove x ticks
+    ax1.set_ylabel(category+": "+subcategory)
+    season_group = seasons_nhl_edge.get_group(season)
+    ax1.plot(season_group["Abbreviation", "Abbreviation"], season_group[category, subcategory], linestyle="None")
+    plot_images(season_group["Abbreviation", "Abbreviation"], season_group[category, subcategory], ax=ax1)
+
+graph_nhl("21-22", "Skating Speed", "22+")
 
 plt.show()
-
-# print(nhl_data["Team"])

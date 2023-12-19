@@ -41,9 +41,4 @@ logos = {'ANA': filepath+"Anaheim_Ducks.png",
 
 def get_logos(team: str):
     logo_file = logos[team]
-    # path, attributes = svg2paths(logo_file)
-    # team_marker = parse_path(attributes[0]['d'])
-    # team_marker.vertices -= team_marker.vertices.mean(axis=0)
-    # team_marker = team_marker.transformed(mpl.transforms.Affine2D().rotate_deg(180))
-    # team_marker = team_marker.transformed(mpl.transforms.Affine2D().scale(-1,1))
     return(logo_file)
