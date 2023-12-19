@@ -4,9 +4,6 @@ import numpy as np
 import matplotlib.ticker as mtick
 import os 
 
-filepath = os.path.abspath(os.getcwd()) + "/logos/"
-print(filepath)
-
 # nhl data 
 nhl_edge_data = pd.read_csv(os.path.abspath(os.getcwd())+r"/NHL-Edge-Data-Teams-21-23.csv", header = [0, 1])
 seasons_nhl_edge = nhl_edge_data.groupby(nhl_edge_data["Season", "Season"]) # group by seasons
