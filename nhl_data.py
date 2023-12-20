@@ -18,15 +18,12 @@ for x_val, y_val in nhl_edge_data:
         for i in range(len(nhl_edge_data[x_val, y_val])):
             nhl_edge_data.loc[:, (x_val, y_val)].values[i] = (float)(nhl_edge_data.loc[:, (x_val, y_val)].values[i][:-1])
 
-# plot images 
-def plot_images(x, y, ax=None):
+# plot images as markers 
+def plot_images(x, y, teams, ax=None):
     ax = ax or plt.gca()
 
-    for xi, yi in zip(x,y):
-        # print(xi)
-        index = np.where([x == xi])[1][0]
-        # print(index)
-        path = get_logos(nhl_edge_data['Abbreviation', 'Abbreviation'].values[index])
+    for xi, yi, zi in zip(x, y, teams):
+        path = get_logos(zi)
         image = Image.open(path)
         image.thumbnail((60, 60), Image.Resampling.LANCZOS)
         im = OffsetImage(image, zoom=72/ax.figure.dpi)
@@ -35,8 +32,6 @@ def plot_images(x, y, ax=None):
         ab = AnnotationBbox(im, (xi,yi), frameon=False, pad=0.0,)
 
         ax.add_artist(ab)
-
-# percentages = ["PPOZ", "OZ%"]
 
 def graph_nhl(season:str, category1:str, subcategory1:str, category2:str, subcategory2:str):
     fig1, ax1 = plt.subplots(1, 1)
@@ -49,9 +44,9 @@ def graph_nhl(season:str, category1:str, subcategory1:str, category2:str, subcat
     ax1.set_xlabel(category1+": "+subcategory1)
     season_group = seasons_nhl_edge.get_group(season)
     ax1.plot(season_group[category1, subcategory1], season_group[category2, subcategory2], linestyle="None")
-    plot_images(season_group[category1, subcategory1], season_group[category2, subcategory2], ax=ax1)
+    plot_images(season_group[category1, subcategory1], season_group[category2, subcategory2], season_group['Abbreviation', 'Abbreviation'], ax=ax1)
 
-graph_nhl("21-22", "Zone Time", "PPOZ%", "Shot Speed", "90+ per 60")
+graph_nhl("21-22", "Zone Time", "OZ%", "Shot Speed", "90+ per 60")
 
 plt.show()
 
