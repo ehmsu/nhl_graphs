@@ -6,17 +6,17 @@ import os
 from logos import get_logos
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from PIL import Image 
+import sys
 
 # nhl data 
 nhl_edge_data = pd.read_csv(os.path.abspath(os.getcwd())+r"/NHL-Edge-Data-Teams-21-23.csv", header = [0, 1])
 seasons_nhl_edge = nhl_edge_data.groupby(nhl_edge_data["Season", "Season"]) # group by seasons
 
-# convert Zone Time OZ% to OZ as a float 
-for i in range(len(nhl_edge_data["Zone Time", "OZ%"])):
-    nhl_edge_data.loc[:, ("Zone Time", "OZ%")].values[i] = (float)(nhl_edge_data.loc[:, ("Zone Time", "OZ%")].values[i][:-1])
-# convert Zone Time PPOZ to PPOZ as a float 
-for i in range(len(nhl_edge_data["Zone Time", "PPOZ"])):
-    nhl_edge_data.loc[:, ("Zone Time", "PPOZ")].values[i] = (float)(nhl_edge_data.loc[:, ("Zone Time", "PPOZ")].values[i][:-1])
+# strip all % from data with %
+for x_val, y_val in nhl_edge_data:
+    if '%' in y_val:
+        for i in range(len(nhl_edge_data[x_val, y_val])):
+            nhl_edge_data.loc[:, (x_val, y_val)].values[i] = (float)(nhl_edge_data.loc[:, (x_val, y_val)].values[i][:-1])
 
 # plot images 
 def plot_images(x, y, ax=None):
@@ -25,7 +25,7 @@ def plot_images(x, y, ax=None):
     for xi, yi in zip(x,y):
         path = get_logos(xi)
         image = Image.open(path)
-        image.thumbnail((50, 50), Image.Resampling.LANCZOS)
+        image.thumbnail((60, 60), Image.Resampling.LANCZOS)
         im = OffsetImage(image, zoom=72/ax.figure.dpi)
         im.image.axes = ax
 
@@ -33,11 +33,11 @@ def plot_images(x, y, ax=None):
 
         ax.add_artist(ab)
 
-percentages = ["PPOZ", "OZ%"]
+# percentages = ["PPOZ", "OZ%"]
 
 def graph_nhl(season:str, category:str, subcategory:str):
     fig1, ax1 = plt.subplots(1, 1)
-    if subcategory in percentages:
+    if '%' in subcategory:
         fmt = '%.1f%%'
         yticks = mtick.FormatStrFormatter(fmt)
         ax1.yaxis.set_major_formatter(yticks)
@@ -48,6 +48,8 @@ def graph_nhl(season:str, category:str, subcategory:str):
     ax1.plot(season_group["Abbreviation", "Abbreviation"], season_group[category, subcategory], linestyle="None")
     plot_images(season_group["Abbreviation", "Abbreviation"], season_group[category, subcategory], ax=ax1)
 
-graph_nhl("21-22", "Skating Speed", "22+")
+graph_nhl("21-22", "Shot Speed", "90+ per 60")
 
 plt.show()
+
+sys.exit(0)
