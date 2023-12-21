@@ -35,19 +35,20 @@ def plot_images(x, y, teams, ax=None):
 
 def graph_nhl(season:str, category1:str, subcategory1:str, category2:str, subcategory2:str):
     fig1, ax1 = plt.subplots(1, 1)
+    ax1.grid()
     if '%' in subcategory2:
         fmt = '%.1f%%'
         yticks = mtick.FormatStrFormatter(fmt)
         ax1.yaxis.set_major_formatter(yticks)
     ax1.set_title(season + " " + category1 + ": " + subcategory1 + " vs. " + category2 + ": " + subcategory2)
-    ax1.set_ylabel(category2+": "+subcategory2)
     ax1.set_xlabel(category1+": "+subcategory1)
+    ax1.set_ylabel(category2+": "+subcategory2)
     season_group = seasons_nhl_edge.get_group(season)
     ax1.plot(season_group[category1, subcategory1], season_group[category2, subcategory2], linestyle="None")
     plot_images(season_group[category1, subcategory1], season_group[category2, subcategory2], season_group['Abbreviation', 'Abbreviation'], ax=ax1)
 
-graph_nhl("21-22", "Zone Time", "OZ%", "Shot Speed", "90+ per 60")
+# graph_nhl("21-22", "Skating Speed", "22+", "Distance (above average)", "ES")
 
-plt.show()
+# plt.show()
 
-sys.exit(0)
+# sys.exit(0)
